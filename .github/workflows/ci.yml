@@ -1,0 +1,32 @@
+name: CI
+on:
+push:
+branches: [main]
+pull_request:
+branches: [main]
+jobs:
+quality:
+runs-on: ubuntu-latest
+steps:
+- name: Check out repository
+uses: actions/checkout@v4
+- name: Set up Node.js
+uses: actions/setup-node@v4
+with:
+node-version: 24
+cache: yarn
+- name: Install dependencies
+run: yarn install --immutable
+- name: Run ESLint
+run: yarn lint
+- name: Run tests
+run: yarn test
+- name: Generate code coverage
+run: yarn coverage
+- name: Upload coverage HTML report
+if: always()
+uses: actions/upload-artifact@v4
+with:
+name: code-coverage-report
+path: coverage/
+if-no-files-found: ignore
